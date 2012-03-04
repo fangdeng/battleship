@@ -40,6 +40,24 @@ describe("professor x", function() {
 
         post( task, 'click', { value: 1.5 } );
         expect( get( task, 'click' ) ).toEqual( 6.5 );
+
+        describe("可以设置数据变化的时刻", function(){
+
+            describe("过去的变化会影响现在", function(){
+                post( task, 'click', { value: 3, at: Date.now() - 5 * 3600 * 1000 } );
+                expect( get( task, 'click' ) ).toEqual( 9.5 );
+            });
+
+            describe("可以获取过去的数据", function(){
+                var time = Date.now() - 4 * 3600 * 1000;
+                expect( get( task, 'click', time ) ).toEqual( 3 );
+
+                describe("超过了创建的时间,应该返回null", function(){
+                    time -= 2 * 3600 * 1000;
+                    expect( get( task, 'click', time ) ).toBeNull();
+                });
+            });
+        });
     });
 
     it("可以通过请求更新原有的值", function(){
@@ -51,6 +69,19 @@ describe("professor x", function() {
 
         update( task, 'click', { value : 150 } );
         expect( get( task, 'click' ) ).toEqual( 150 );
+
+        describe("可以设置数据更新的时刻", function(){
+            var time = Date.now() - 4 * 3600 * 1000;
+            update( task, 'click', { value: 500, at: time } );
+
+            describe("可以正确获取过去更新的数据",function(){
+                expect( get( task, 'click', time + 1000 ) ).toEqual( 500 );
+            });
+
+            describe("过去设置的数据对现在的update没有影响", function(){
+                expect( get( task, 'click' ) ).toEqual( 150 );
+            });
+        });
     });
 
 
