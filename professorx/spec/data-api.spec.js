@@ -63,22 +63,22 @@ describe("professor x", function() {
     it("可以通过请求更新原有的值", function(){
 
         describe("原先没有的数据也可以正确设值", function(){
-            update( task, 'click', { value : 100 } );
+            put( task, 'click', { value : 100 } );
             expect( get( task, 'click' ) ).toEqual( 100 );
         });
 
-        update( task, 'click', { value : 150 } );
+        put( task, 'click', { value : 150 } );
         expect( get( task, 'click' ) ).toEqual( 150 );
 
         describe("可以设置数据更新的时刻", function(){
             var time = Date.now() - 4 * 3600 * 1000;
-            update( task, 'click', { value: 500, at: time } );
+            put( task, 'click', { value: 500, at: time } );
 
             describe("可以正确获取过去更新的数据",function(){
                 expect( get( task, 'click', time + 1000 ) ).toEqual( 500 );
             });
 
-            describe("过去设置的数据对现在的update没有影响", function(){
+            describe("过去设置的数据对现在的put没有影响", function(){
                 expect( get( task, 'click' ) ).toEqual( 150 );
             });
         });
@@ -89,7 +89,7 @@ describe("professor x", function() {
         //TODO: implement it
     }
 
-    function update( task, field, param ){
+    function put( task, field, param ){
         //TODO: implement it
     }
 
