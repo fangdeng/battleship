@@ -25,60 +25,70 @@ describe("professor x", function() {
         expect( get( task, 'doubleclick') ).toEqual(0);
     });
 
-    it("可以通过请求增加或减少数据", function(){
+    describe("可以通过请求增加或减少数据", function(){
 
-        describe("原先没有的数据也可以正确设值", function(){
+        it("原先没有的数据也可以正确设值", function(){
             post( task, 'click', { value: 5 } );
             expect( get( task, 'click' ) ).toEqual( 5 );
         });
 
-        post( task, 'click', { value: 10 } );
-        expect( get( task, 'click' ) ).toEqual( 15 );
+        it("在原有的数据基础上进行正常增减", function(){
+            post( task, 'click', { value: 10 } );
+            expect( get( task, 'click' ) ).toEqual( 15 );
 
-        post( task, 'click', { value: -10 } );
-        expect( get( task, 'click' ) ).toEqual( 5 );
+            post( task, 'click', { value: -10 } );
+            expect( get( task, 'click' ) ).toEqual( 5 );
 
-        post( task, 'click', { value: 1.5 } );
-        expect( get( task, 'click' ) ).toEqual( 6.5 );
+            post( task, 'click', { value: 1.5 } );
+            expect( get( task, 'click' ) ).toEqual( 6.5 );
+        });
 
         describe("可以设置数据变化的时刻", function(){
 
-            describe("过去的变化会影响现在", function(){
+            it("能够将过去的变化反映在当前值", function(){
                 post( task, 'click', { value: 3, at: Date.now() - 5 * 3600 * 1000 } );
                 expect( get( task, 'click' ) ).toEqual( 9.5 );
             });
 
-            describe("可以获取过去的数据", function(){
-                var time = Date.now() - 4 * 3600 * 1000;
-                expect( get( task, 'click', time ) ).toEqual( 3 );
+            describe("此时去获取值", function(){
+                it("可以返回过去时刻的值", function(){
+                    var time = Date.now() - 4 * 3600 * 1000;
+                    expect( get( task, 'click', time ) ).toEqual( 3 );
+                });
 
-                describe("超过了创建的时间,应该返回null", function(){
-                    time -= 2 * 3600 * 1000;
-                    expect( get( task, 'click', time ) ).toBeNull();
+                describe("如果超过了创建的时间", function(){
+                    it("应该返回null", function(){
+                        time -= 2 * 3600 * 1000;
+                        expect( get( task, 'click', time ) ).toBeNull();
+                    });
                 });
             });
         });
     });
 
-    it("可以通过请求更新原有的值", function(){
+    describe("通过请求更新原有的值", function(){
 
-        describe("原先没有的数据也可以正确设值", function(){
+        it("原先没有的数据也可以正确设值", function(){
             put( task, 'click', { value : 100 } );
             expect( get( task, 'click' ) ).toEqual( 100 );
         });
 
-        put( task, 'click', { value : 150 } );
-        expect( get( task, 'click' ) ).toEqual( 150 );
+        it("可以返回正确的value (在已有的数值基础上)", function(){
+            put( task, 'click', { value : 150 } );
+            expect( get( task, 'click' ) ).toEqual( 150 );
+        });
 
-        describe("可以设置数据更新的时刻", function(){
-            var time = Date.now() - 4 * 3600 * 1000;
-            put( task, 'click', { value: 500, at: time } );
+        describe("设置数据更新的时刻", function(){
+            it("可以返回过去时刻的值", function(){
+                var time = Date.now() - 4 * 3600 * 1000;
+                put( task, 'click', { value: 500, at: time } );
+            });
 
-            describe("可以正确获取过去更新的数据",function(){
+            it("可以正确获取过去更新的数据",function(){
                 expect( get( task, 'click', time + 1000 ) ).toEqual( 500 );
             });
 
-            describe("过去设置的数据对现在的put没有影响", function(){
+            it("过去设置的数据对现在的put没有影响", function(){
                 expect( get( task, 'click' ) ).toEqual( 150 );
             });
         });
