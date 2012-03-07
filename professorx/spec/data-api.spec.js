@@ -51,11 +51,9 @@ describe("professor x", function() {
                     expect( get( task, 'click', time ) ).toEqual( 3 );
                 });
 
-                describe("如果超过了创建的时间", function(){
-                    it("应该返回null", function(){
-                        time -= 2 * 3600 * 1000;
-                        expect( get( task, 'click', time ) ).toBeNull();
-                    });
+                it("应该返回null, 如果超过了创建的时间", function(){
+                    time -= 2 * 3600 * 1000;
+                    expect( get( task, 'click', time ) ).toBeNull();
                 });
             });
         });
