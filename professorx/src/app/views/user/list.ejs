@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="gbk"/>
+        <title>会员列表</title>
+        <meta name="description" content="阿里巴巴批发大市场"/>
+        <meta name="keywords" content="阿里巴巴,采购批发,1688,行业门户,网上贸易,b2b,电子商务"/>
+        <!--[if IE]>
+            <script src="http://static.c.aliimg.com/js/app/operation/module/html5reset/html5-for-ie.js"></script>
+        <![endif]-->
+        <link href="http://static.c.aliimg.com/css/app/operation/industrial/global/v4.css" rel="stylesheet"/>
+        <link href="http://static.c.aliimg.com/css/app/operation/industrial/page/category/main/merge.css" rel="stylesheet"/>
+    </head>
+    <body>
+        <header>
+			会员列表
+		</header>
+		<article>
+			<table>
+				<thead>
+					<tr>
+						<th>用户名</th>
+						<th>真是姓名</th>
+						<th>任务数</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan="3"></td>
+					</tr>
+				</tfoot>
+				<tbody>
+					<% for(var i=0,l=users.length;i<l;i++){ %>
+					<tr>
+						<td><a title="<%= users[i].userName %>" href="/myHome/<%= users[i].userName %>"><%= users[i].userName %></a></td>
+						<td><%= users[i].trueName %></td>
+						<td><%= 0 %></td>
+					<tr>
+					<% } %>
+				</tbody>
+			</table>
+		</article>
+		<footer>
+		
+		</footer>
+    </body>
+</html>
