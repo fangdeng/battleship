@@ -17,19 +17,14 @@ describe("professor x", function() {
         removeTask( task );
     });
 
-    it("收到请求时可以创建数据", function(){
-        post( task, 'click' );
-        expect( get( task, 'click') ).toEqual(0);
-
-        post( task, 'doubleclick' );
-        expect( get( task, 'doubleclick') ).toEqual(0);
-    });
-
-    describe("可以通过请求增加或减少数据", function(){
+    describe("POST: 可以通过请求增加或减少数据", function(){
 
         it("原先没有的数据也可以正确设值", function(){
             post( task, 'click', { value: 5 } );
             expect( get( task, 'click' ) ).toEqual( 5 );
+
+            post( task, 'doubleclick' );
+            expect( get( task, 'doubleclick') ).toEqual(0);
         });
 
         it("在原有的数据基础上进行正常增减", function(){
@@ -66,7 +61,7 @@ describe("professor x", function() {
         });
     });
 
-    describe("通过请求更新原有的值", function(){
+    describe("PUT: 通过请求更新原有的值", function(){
 
         it("原先没有的数据也可以正确设值", function(){
             put( task, 'click', { value : 100 } );
@@ -79,8 +74,9 @@ describe("professor x", function() {
         });
 
         describe("设置数据更新的时刻", function(){
+            var time = Date.now() - 4 * 3600 * 1000;
+
             it("可以返回过去时刻的值", function(){
-                var time = Date.now() - 4 * 3600 * 1000;
                 put( task, 'click', { value: 500, at: time } );
             });
 
