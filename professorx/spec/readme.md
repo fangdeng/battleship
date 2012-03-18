@@ -4,69 +4,76 @@
 
 独立于界面之外，prefessorX以restful API的方式提供数据输入和输出的服务
 
-## 数据输入
+数据输入
+--------
 
-    # 相对地改变字段的值
-    POST   /<任务id>/<字段名称>
+客户端将要记录的数据封装成一个json字符串，经过base64编码后传给服务器。
 
-    # 设置字段为新的数值
-    PUT    /<任务id>/<字段名称>
+### json 数据格式
 
-    # 删除字段
-    DELETE /<任务id>/<字段名称>
+必须包含tid字段：
 
-    # 删除任务
-    DELETE /<任务id>
+    { 
+        "tid": <任务id>,
+        "key": value
+    }
 
+其他数据可以是单层，也可以多层包装，例如：
 
-例如,如果有任务browser-stat, 字段ie6, 下列请求后ie6字段的值分别为:
+    {
+        "tid"       : "10bec59",        //tid必须
 
-`{ value: x }` 代表form中的数值
+        "browser"   : {                 //可以使用object
+            "shell" : "Sogou",
+            "core"  : {                 //可以多层
+                name    : "trident",
+                version : "5"
+            }
+        },
 
-    POST    /browser-stat/ie6       # => 0
-    POST    /browser-stat/ie6
-            { value : 5 }           # => 5
-    POST    /browser-stat/ie6
-            { value : 10 }          # => 15
-    POST    /browser-stat/ie6
-            { value : -4 }          # => 11
-    PUT     /browser-stat/ie6
-            { value : 200 }         # => 200
-    DELETE  /browser-stat/ie6       # => null
-    POST    /browser-stat/ie6
-            { value : 15.4 }        # => 15.4
+        "screen"    : {
+            "w"     : 1920,
+            "h"     : 1200
+        },
 
-### 输入以前的数据
-以上都是输入当前的数据，存储的时候会以Time.now()来存储时间。我们也可以指定记录的时间:
+        "flash"     : "11.0 DEBUG"      //单层
+    }
 
-    POST    /browser-stat/ie6
-            { value: 5, at: "2011-04-01 18:34:53" }
+也可以没有其他key，只传一个tid
 
-    PUT     /browser-stat/ie6
-            { value: 430, at: "2012-04-01 18:34:53" }
+    { "tid": "10bec59" }
 
-## 数据输出
+### base64 编码
 
-    # 返回任务所有字段的当前值
-    GET /<任务id>
+对json字符串以base64编码
 
-    # 返回任务在指定时刻所有字段的值
-    GET /<任务id>/at/<时刻>
+### 发送到服务器
 
-    # 返回当前值
-    GET /<任务id>/<字段名称>
+    GET /beacon?data=<base64编码后的字符串>
 
-    # 返回字段在指定时刻的值
-    GET /<任务id>/<字段名称>/at/<时刻>
+数据统计和查询
+--------------
 
-## 任务管理
+    GET /task/<任务id>/<查询类型>/<查询条件 base64>
 
-    # 新增任务
-    POST    /tasks
+### 查询类型
 
-    # 修改任务
-    PUT     /tasks
+* info : 简要信息，包括count,last_seen信息
 
-    # 删除任务
-    DELETE  /tasks
-    
+    {
+        count: 数量,
+        last_seen: 最后一次更新时间
+    }
+
+* count : 求数量
+* summ  : 求总和
+* average : 求平均值
+
+### 查询条件
+类css3选择器语法
+
+* \*     : 默认条件，查询所有记录（此时可以省略查询条件）
+* browser : 查询含有browser字段的记录
+* browser.core.name=trident : 查询符合条件的记录
+* browser.core.name=trident && browser.shell=360SE : 查询符合条件的记录
+* flash.version > 10
